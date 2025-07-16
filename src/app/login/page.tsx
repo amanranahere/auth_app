@@ -1,16 +1,40 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 export default function LoginPage() {
+  const router = useRouter();
   const [user, setUser] = useState({
     email: "",
     password: "",
   });
+  const [btnDisabled, setBtnDisabled] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const onLogin = async () => {};
+  const onLogin = async () => {
+    try {
+      setLoading(true);
+      await axios.post("/api/users/login", user);
+      toast.success("Logged in");
+      router.push("/profile");
+    } catch (error: any) {
+      toast.error("Error while login");
+      console.log("Error while login", error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (user.email.length > 0 && user.password.length > 0) {
+      setBtnDisabled(false);
+    } else {
+      setBtnDisabled(true);
+    }
+  }, [user]);
 
   return (
     <div className="h-screen w-full flex flex-col justify-center items-center">
@@ -53,9 +77,10 @@ export default function LoginPage() {
 
         <button
           onClick={onLogin}
-          className="p-[8px] bg-[#00bfff] hover:bg-[#00bfff96] active:bg-[#00bfff63] rounded-[10px] hover:transition duration-150 ease-out select-none outline-none border-none cursor-pointer"
+          disabled={btnDisabled}
+          className="p-[8px] bg-[#00bfff] hover:bg-[#00bfff96] active:bg-[#00bfff63] rounded-[10px] hover:transition duration-150 ease-out select-none outline-none border-none cursor-pointer disabled:cursor-not-allowed"
         >
-          Login
+          {loading ? "Logging in..." : "Login"}
         </button>
 
         <div className="w-full flex justify-center">

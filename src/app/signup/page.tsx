@@ -1,17 +1,45 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 export default function SingupPage() {
+  const router = useRouter();
   const [user, setUser] = useState({
     username: "",
     email: "",
     password: "",
   });
+  const [btnDisabled, setBtnDisabled] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const onSignup = async () => {};
+  const onSignup = async () => {
+    try {
+      setLoading(true);
+      await axios.post("/api/users/signup", user);
+      toast.success("Account created successfully");
+      router.push("/login");
+    } catch (error: any) {
+      console.log("Error while signup", error.message);
+      toast.error("Error while signup");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (
+      user.email.length > 0 &&
+      user.username.length > 0 &&
+      user.password.length > 0
+    ) {
+      setBtnDisabled(false);
+    } else {
+      setBtnDisabled(true);
+    }
+  }, [user]);
 
   return (
     <div className="h-screen w-full flex flex-col justify-center items-center">
@@ -70,9 +98,10 @@ export default function SingupPage() {
 
         <button
           onClick={onSignup}
-          className="p-[8px] bg-[#00bfff] hover:bg-[#00bfff96] active:bg-[#00bfff63] rounded-[10px] hover:transition duration-150 ease-out select-none outline-none border-none cursor-pointer"
+          disabled={btnDisabled}
+          className="p-[8px] bg-[#00bfff] hover:bg-[#00bfff96] active:bg-[#00bfff63] rounded-[10px] hover:transition duration-150 ease-out select-none outline-none border-none cursor-pointer disabled:cursor-not-allowed"
         >
-          Sign Up
+          {loading ? "Signing up..." : "Sign up"}
         </button>
 
         <div className="w-full flex justify-center">

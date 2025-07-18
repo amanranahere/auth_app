@@ -43,7 +43,9 @@ export default function SingupPage() {
 
   return (
     <div className="h-screen w-full flex flex-col justify-center items-center">
-      <h1 className="font-mono text-2xl">SIGNUP PAGE</h1>
+      <h1 className="fixed top-10 left-1/2 -translate-x-1/2 font-mono text-2xl font-bold">
+        SIGNUP PAGE
+      </h1>
 
       <hr />
 

@@ -1,25 +1,30 @@
 import User from "@/models/userModel";
 import bcrypt from "bcryptjs";
 import nodemailer from "nodemailer";
+import crypto from "crypto";
 
 export const sendEmail = async ({ email, emailType, userId }: any) => {
   try {
-    const hashedToken = await bcrypt.hash(userId.toString(), 10);
+    const user = userId
+      ? await User.findById(userId)
+      : await User.findOne({ email });
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    const token = crypto.randomBytes(32).toString("hex");
+    const hashedToken = await bcrypt.hash(token, 10);
 
     if (emailType === "VERIFY") {
-      await User.findOneAndUpdate(
-        { _id: userId },
-        {
-          verifyToken: hashedToken,
-          verifyTokenExpiry: Date.now() + 3600000,
-        }
-      );
+      user.verifyToken = hashedToken;
+      user.verifyTokenExpiry = Date.now() + 3600000;
     } else if (emailType === "RESET") {
-      await User.findByIdAndUpdate(userId, {
-        forgotPasswordToken: hashedToken,
-        forgotPasswordTokenExpiry: Date.now() + 3600000,
-      });
+      user.forgotPasswordToken = hashedToken;
+      user.forgotPasswordTokenExpiry = Date.now() + 3600000;
     }
+
+    await user.save();
 
     var transport = nodemailer.createTransport({
       host: "sandbox.smtp.mailtrap.io",
@@ -30,19 +35,21 @@ export const sendEmail = async ({ email, emailType, userId }: any) => {
       },
     });
 
+    const linkPath =
+      emailType === "VERIFY"
+        ? `/verifyemail?token=${token}`
+        : `/changepassword?token=${token}`;
+
     const mailOptions = {
       from: process.env.EMAIL,
       to: email,
       subject:
         emailType === "VERIFY" ? "Verify your email" : "Reset your password",
-      html: `<p>Click <a href="${
-        process.env.DOMAIN
-      }/verifyemail?token=${hashedToken}">here</a> to ${
+      html: `<p>Click <a href="${process.env.DOMAIN}${linkPath}">here</a> to ${
         emailType === "VERIFY" ? "verify your email" : "reset your password"
-      } or copy and paste the link below in your browser.<br> ${
+      } or paste this in your browser:<br> ${
         process.env.DOMAIN
-      }/verifyemail?token=${hashedToken}
-      </p>`,
+      }${linkPath}</p>`,
     };
 
     const mailresponse = await transport.sendMail(mailOptions);

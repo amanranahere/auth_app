@@ -38,7 +38,9 @@ export default function LoginPage() {
 
   return (
     <div className="h-screen w-full flex flex-col justify-center items-center">
-      <h1 className="font-mono text-2xl">LOGIN PAGE</h1>
+      <h1 className="fixed top-10 left-1/2 -translate-x-1/2 font-mono text-2xl font-bold">
+        LOGIN PAGE
+      </h1>
 
       <hr />
 
@@ -83,11 +85,20 @@ export default function LoginPage() {
           {loading ? "Logging in..." : "Login"}
         </button>
 
-        <div className="w-full flex justify-center">
-          Don't have an account?&nbsp;
-          <Link href="/signup" className="text-[#00bfff] hover:underline">
-            Sign up
+        <div className="flex justify-between items-center">
+          <Link
+            href="/forgotpassword"
+            className="text-[#00bfff] hover:underline"
+          >
+            Forgot password
           </Link>
+
+          <div className="flex">
+            Don't have an account?&nbsp;
+            <Link href="/signup" className="text-[#00bfff] hover:underline">
+              Sign up
+            </Link>
+          </div>
         </div>
       </div>
     </div>

@@ -1,5 +1,6 @@
 import { connect } from "@/dbConfig/dbConfig";
 import User from "@/models/userModel";
+import bcrypt from "bcryptjs";
 import { NextRequest, NextResponse } from "next/server";
 
 connect();
@@ -10,11 +11,19 @@ export async function POST(request: NextRequest) {
     const { token } = reqBody;
 
     const user = await User.findOne({
-      verifyToken: token,
       verifyTokenExpiry: { $gt: Date.now() },
     });
 
     if (!user) {
+      return NextResponse.json(
+        { error: "Invalid or expired token" },
+        { status: 400 }
+      );
+    }
+
+    const isTokenValid = await bcrypt.compare(token, user.verifyToken || "");
+
+    if (!isTokenValid) {
       return NextResponse.json({ error: "Invalid token" }, { status: 400 });
     }
 

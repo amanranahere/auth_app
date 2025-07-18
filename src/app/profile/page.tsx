@@ -48,7 +48,9 @@ export default function UserProfile() {
   return (
     <>
       <div className="h-screen w-full flex flex-col gap-y-10 justify-center items-center font-mono">
-        <h1>PROFILE PAGE</h1>
+        <h1 className="fixed top-10 left-1/2 -translate-x-1/2 font-mono text-2xl font-bold">
+          PROFILE PAGE
+        </h1>
 
         <div className="flex flex-col">
           <h2>

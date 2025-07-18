@@ -41,7 +41,9 @@ export default function VerifyEmailPage() {
   return (
     <div className="min-h-screen w-full flex justify-center items-center px-4">
       <div className="flex flex-col items-center justify-center gap-y-6 max-w-md w-full">
-        <h1 className="font-mono text-2xl font-bold">VERIFY EMAIL</h1>
+        <h1 className="fixed top-10 left-1/2 -translate-x-1/2 font-mono text-2xl font-bold">
+          VERIFY EMAIL
+        </h1>
 
         {loading ? (
           <p className="font-mono text-cyan-300">Verifying...</p>

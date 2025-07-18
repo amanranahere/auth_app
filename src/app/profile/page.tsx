@@ -67,7 +67,7 @@ export default function UserProfile() {
 
           <Link
             href={`/profile/${data?._id}`}
-            className={`mt-4 rounded-full bg-blue-400 hover:bg-blue-400/80 active:bg-blue-400/60 duration-200 text-white px-8 py-2 font-medium cursor-pointer ${
+            className={`mt-4 rounded-full bg-blue-400 hover:bg-blue-400/80 active:bg-blue-400/60 duration-200 text-white flex items-center justify-center py-2 font-medium cursor-pointer ${
               loading && "disabled:cursor-not-allowed"
             }`}
           >

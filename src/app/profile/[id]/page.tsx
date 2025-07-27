@@ -11,7 +11,7 @@ interface User {
   isVerified: string;
 }
 
-export default function UserProfile({ params }: any) {
+export default function UserProfile() {
   const [data, setData] = useState<User | null>(null);
 
   const getUserDetails = async () => {
